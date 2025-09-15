@@ -1,2 +1,2 @@
 # HomeworkGorlanovMipt
-Домашние задания по Java
+Домашние задания по Java.
