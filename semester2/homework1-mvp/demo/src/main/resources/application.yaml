@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+app:
+  name: "To-Do List Manager"
+  version: "1.0.0"
+  description: "MVP приложение для управления задачами"
+
+logging:
+  level:
+    com.example.demo: INFO
+    org.springframework.web: INFO

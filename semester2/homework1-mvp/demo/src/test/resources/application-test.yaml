@@ -1,0 +1,18 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+server:
+  port: 0  # случайный порт для тестов
+
+logging:
+  level:
+    com.example.demo: DEBUG
+    org.springframework: INFO
+    org.springframework.web: INFO
+    org.springframework.boot.test: DEBUG
+
+management:
+  endpoints:
+    enabled-by-default: false
