@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5736f803-dacb-49db-a963-bdd987649c6d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/dateTimeMessage.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/google-java-format.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dependency-reduced-pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Application.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/UnitTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/MainClass.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/Student.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/forEmpoyees.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/model/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/model/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/model/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/model/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/model/Human.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/out/production/alexandergorlanov/com/mipt/alexandergorlanov/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/out/production/alexandergorlanov/com/mipt/alexandergorlanov/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/out/production/alexandergorlanov/com/mipt/alexandergorlanov/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/out/production/alexandergorlanov/com/mipt/alexandergorlanov/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/out/production/alexandergorlanov/com/mipt/alexandergorlanov/model/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/out/production/alexandergorlanov/com/mipt/alexandergorlanov/model/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/out/production/alexandergorlanov/com/mipt/alexandergorlanov/model/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mipt/alexandergorlanov/out/production/alexandergorlanov/com/mipt/alexandergorlanov/model/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/javaIO/FileProcessor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/javaIO/FileProcessorTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/javaIO/TextFileAnalyzer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/javaIO/TextFileAnalyzerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/multihreading/Bank.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/multihreading/BankAccount.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/multihreading/TestBank.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/patterns/CachingDecorator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/patterns/DataService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/patterns/DataServiceDecorator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/patterns/DataServiceTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/patterns/LoggingDecorator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/patterns/MetricableDecorator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/patterns/SimpleDataService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/patterns/ValidationDecorator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/practiceJavaCollection/CollectionPerformanceTester.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/practiceJavaCollection/CustomArrayList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/practiceJavaCollection/CustomList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/practiceJavaCollection/MapStudent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/practiceJavaCollection/Student.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/practiceJavaCollection/testCustomList.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/practiceWithGeneric/ArrayUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/practiceWithGeneric/Calculator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/practiceWithGeneric/CollectionUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/practiceWithGeneric/Pair.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/validationsFramework/ValidationResult.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/validationsFramework/Validator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/validationsFramework/annotations/Email.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/validationsFramework/annotations/NotNull.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/validationsFramework/annotations/Range.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/validationsFramework/annotations/Size.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "AlexanderGorlanovHSPI"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/AlexanderGorlanovHSPI/HomeworkGorlanovMipt.git",
+    "accountId": "620483e0-4a2a-491c-b948-78d78a03c77c"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="3AIBx9or3KG8BIeILaIMGxwkX7i" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/alexander/HomeworkGorlanovMipt"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="HomeworkGorlanovMipt" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-cffe25b9f5b3-intellij.indexing.shared.core-IU-253.28294.334" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5736f803-dacb-49db-a963-bdd987649c6d" name="Changes" comment="" />
+      <created>1772270447557</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1772270447557</updated>
+    </task>
+    <servers />
+  </component>
+</project>
