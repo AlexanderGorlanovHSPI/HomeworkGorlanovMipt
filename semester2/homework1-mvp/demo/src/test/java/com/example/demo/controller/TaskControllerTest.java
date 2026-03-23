@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Task;
+import com.example.demo.model.TaskDto;
 import com.example.demo.service.TaskService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")  // Добавляем тестовый профиль
+@ActiveProfiles("test")
 public class TaskControllerTest {
 
   @Autowired
@@ -32,13 +32,13 @@ public class TaskControllerTest {
 
   private Task task1;
   private Task task2;
-  private Task newTask;
+  private TaskDto newTask;
 
   @BeforeEach
   void setUp() {
     task1 = new Task(1L, "Тестовая задача 1", "Описание 1", false);
     task2 = new Task(2L, "Тестовая задача 2", "Описание 2", true);
-    newTask = new Task(null, "Новая задача", "Новое описание", false);
+    newTask = new TaskDto(null, "Новая задача", "Новое описание", false);
   }
 
   @Test
@@ -46,7 +46,7 @@ public class TaskControllerTest {
     List<Task> tasks = Arrays.asList(task1, task2);
     when(taskService.getAllTasks()).thenReturn(tasks);
 
-    ResponseEntity<Task[]> response = restTemplate.getForEntity("/api/tasks", Task[].class);
+    ResponseEntity<TaskDto[]> response = restTemplate.getForEntity("/api/tasks", TaskDto[].class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isNotNull();
@@ -58,7 +58,7 @@ public class TaskControllerTest {
   void getTaskById_WithExistingId_ShouldReturnTask() {
     when(taskService.getTaskById(1L)).thenReturn(Optional.of(task1));
 
-    ResponseEntity<Task> response = restTemplate.getForEntity("/api/tasks/1", Task.class);
+    ResponseEntity<TaskDto> response = restTemplate.getForEntity("/api/tasks/1", TaskDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isNotNull();
@@ -70,7 +70,7 @@ public class TaskControllerTest {
   void getTaskById_WithNonExistingId_ShouldReturnNotFound() {
     when(taskService.getTaskById(999L)).thenReturn(Optional.empty());
 
-    ResponseEntity<Task> response = restTemplate.getForEntity("/api/tasks/999", Task.class);
+    ResponseEntity<TaskDto> response = restTemplate.getForEntity("/api/tasks/999", TaskDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     verify(taskService, times(1)).getTaskById(999L);
@@ -83,9 +83,10 @@ public class TaskControllerTest {
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<Task> request = new HttpEntity<>(newTask, headers);
+    HttpEntity<TaskDto> request = new HttpEntity<>(newTask, headers);
 
-    ResponseEntity<Task> response = restTemplate.postForEntity("/api/tasks", request, Task.class);
+    ResponseEntity<TaskDto> response =
+        restTemplate.postForEntity("/api/tasks", request, TaskDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     assertThat(response.getBody()).isNotNull();
@@ -96,18 +97,19 @@ public class TaskControllerTest {
   @Test
   void updateTask_WithExistingId_ShouldReturnUpdatedTask() {
     Task updatedTask = new Task(1L, "Обновленная задача", "Обновленное описание", true);
+    TaskDto updatedTaskDto = new TaskDto(1L, "Обновленная задача", "Обновленное описание", true);
     when(taskService.existsById(1L)).thenReturn(true);
     when(taskService.updateTask(any(Task.class))).thenReturn(updatedTask);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<Task> requestEntity = new HttpEntity<>(updatedTask, headers);
+    HttpEntity<TaskDto> requestEntity = new HttpEntity<>(updatedTaskDto, headers);
 
-    ResponseEntity<Task> response = restTemplate.exchange(
+    ResponseEntity<TaskDto> response = restTemplate.exchange(
             "/api/tasks/1",
             HttpMethod.PUT,
             requestEntity,
-            Task.class
+            TaskDto.class
     );
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -119,18 +121,18 @@ public class TaskControllerTest {
 
   @Test
   void updateTask_WithNonExistingId_ShouldReturnNotFound() {
-    Task updatedTask = new Task(999L, "Обновленная", "Описание", true);
+    TaskDto updatedTask = new TaskDto(999L, "Обновленная", "Описание", true);
     when(taskService.existsById(999L)).thenReturn(false);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<Task> requestEntity = new HttpEntity<>(updatedTask, headers);
+    HttpEntity<TaskDto> requestEntity = new HttpEntity<>(updatedTask, headers);
 
-    ResponseEntity<Task> response = restTemplate.exchange(
+    ResponseEntity<TaskDto> response = restTemplate.exchange(
             "/api/tasks/999",
             HttpMethod.PUT,
             requestEntity,
-            Task.class
+            TaskDto.class
     );
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);

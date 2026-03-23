@@ -3,9 +3,6 @@ spring:
     activate:
       on-profile: dev
 
-server:
-  port: 8081
-
 logging:
   level:
     com.example.demo: DEBUG
