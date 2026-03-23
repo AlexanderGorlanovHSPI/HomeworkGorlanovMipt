@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    com.example.demo: DEBUG
+    org.springframework: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.context: DEBUG
+
+app:
+  name: "To-Do List Manager [DEV]"
+  version: "1.0.0-DEV"
+  dev-mode: true
+  debug-enabled: true
