@@ -1,0 +1,46 @@
+name: Semester2 Homework CI
+
+on:
+  pull_request:
+    paths:
+      - 'semester2/homework1-mvp/demo/**'
+      - '.github/workflows/semester2-homework1-mvp-ci.yml'
+  push:
+    branches:
+      - main
+      - develop
+      - 'hometask_*'
+    paths:
+      - 'semester2/homework1-mvp/demo/**'
+      - '.github/workflows/semester2-homework1-mvp-ci.yml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: semester2/homework1-mvp/demo
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Make mvnw executable
+        run: chmod +x mvnw
+
+      - name: Build and run tests
+        run: ./mvnw -B clean verify
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: semester2/homework1-mvp/demo/target/surefire-reports/

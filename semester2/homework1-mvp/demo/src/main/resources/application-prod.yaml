@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  level:
+    com.example.demo: WARN
+    org.springframework: WARN
+
+app:
+  name: "To-Do List Manager [PROD]"
+  version: "1.0.0"
+  dev-mode: false
+  debug-enabled: false
