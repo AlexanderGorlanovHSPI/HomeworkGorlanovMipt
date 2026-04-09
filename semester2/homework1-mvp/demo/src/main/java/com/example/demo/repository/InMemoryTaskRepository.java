@@ -1,44 +1,21 @@
 package com.example.demo.repository;
 
 import com.example.demo.model.Task;
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.context.annotation.Primary;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.stereotype.Repository;
 
-/**
- * Реализация репозитория задач, хранящая данные в оперативной памяти.
- *
- * <p>Использует {@link ConcurrentHashMap} для потокобезопасного хранения задач и {@link AtomicLong}
- * для генерации уникальных идентификаторов.
- *
- * <p>Является основным (primary) репозиторием приложения.
- *
- * @author Alexander Gorlanov
- * @version 1.0
- * @see TaskRepository
- * @see StubTaskRepository
- */
 @Repository
 @Primary
 public class InMemoryTaskRepository implements TaskRepository {
   private final Map<Long, Task> storage = new ConcurrentHashMap<>();
   private final AtomicLong idGenerator = new AtomicLong(1);
 
-  /**
-   * Сохраняет задачу в репозитории.
-   *
-   * <p>Если у задачи отсутствует ID (null), генерирует новый уникальный идентификатор.
-   *
-   * @param task задача для сохранения
-   * @return сохраненная задача с установленным ID
-   */
   @Override
   public Task save(Task task) {
     if (task.getId() == null) {
