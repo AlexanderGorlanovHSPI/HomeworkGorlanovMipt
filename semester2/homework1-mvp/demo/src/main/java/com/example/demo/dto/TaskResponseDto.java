@@ -1,31 +1,33 @@
-package com.example.demo.model;
+package com.example.demo.dto;
 
+import com.example.demo.model.Priority;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
-public class Task {
+@Schema(description = "DTO ответа с полными данными задачи")
+public class TaskResponseDto {
+  @Schema(example = "1")
   private Long id;
+  @Schema(example = "Сделать домашку")
   private String title;
+  @Schema(example = "Проверить, что все тесты проходят")
   private String description;
+  @Schema(example = "false")
   private boolean completed;
+  @Schema(example = "2026-04-06T20:00:00")
   private LocalDateTime createdAt;
+  @Schema(example = "2026-04-10")
   private LocalDate dueDate;
+  @Schema(example = "HIGH")
   private Priority priority;
-  private Set<String> tags = new HashSet<>();
+  @Schema(example = "[\"study\", \"backend\"]")
+  private Set<String> tags;
 
-  public Task() {}
+  public TaskResponseDto() {}
 
-  public Task(Long id, String title, String description, boolean completed) {
-    this.id = id;
-    this.title = title;
-    this.description = description;
-    this.completed = completed;
-  }
-
-  public Task(
+  public TaskResponseDto(
       Long id,
       String title,
       String description,
@@ -41,7 +43,7 @@ public class Task {
     this.createdAt = createdAt;
     this.dueDate = dueDate;
     this.priority = priority;
-    this.tags = tags == null ? new HashSet<>() : new HashSet<>(tags);
+    this.tags = tags;
   }
 
   public Long getId() { return id; }
@@ -66,41 +68,5 @@ public class Task {
   public void setPriority(Priority priority) { this.priority = priority; }
 
   public Set<String> getTags() { return tags; }
-  public void setTags(Set<String> tags) {
-    this.tags = tags == null ? new HashSet<>() : new HashSet<>(tags);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Task task = (Task) o;
-    return completed == task.completed
-        && Objects.equals(id, task.id)
-        && Objects.equals(title, task.title)
-        && Objects.equals(description, task.description)
-        && Objects.equals(createdAt, task.createdAt)
-        && Objects.equals(dueDate, task.dueDate)
-        && priority == task.priority
-        && Objects.equals(tags, task.tags);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, title, description, completed, createdAt, dueDate, priority, tags);
-  }
-
-  @Override
-  public String toString() {
-    return "Task{"
-        + "id=" + id
-        + ", title='" + title + '\''
-        + ", description='" + description + '\''
-        + ", completed=" + completed
-        + ", createdAt=" + createdAt
-        + ", dueDate=" + dueDate
-        + ", priority=" + priority
-        + ", tags=" + tags
-        + '}';
-  }
+  public void setTags(Set<String> tags) { this.tags = tags; }
 }
