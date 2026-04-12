@@ -1,66 +1,112 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.BulkCompleteTaskException;
 import com.example.demo.exception.TaskNotFoundException;
 import com.example.demo.model.Task;
 import com.example.demo.repository.TaskRepository;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TaskService {
 
   private final TaskRepository taskRepository;
-  private final Map<Long, Task> taskCache = new ConcurrentHashMap<>();
 
-  @Autowired
   public TaskService(TaskRepository taskRepository) {
     this.taskRepository = taskRepository;
   }
 
+  @Transactional(
+      propagation = Propagation.REQUIRED,
+      isolation = Isolation.READ_COMMITTED)
   public Task createTask(Task task) {
-    Task savedTask = taskRepository.save(task);
-    taskCache.put(savedTask.getId(), savedTask);
-    return savedTask;
+    return taskRepository.save(task);
   }
 
-  public Optional<Task> getTaskById(Long id) {
-    Task cachedTask = taskCache.get(id);
-    if (cachedTask != null) {
-      return Optional.of(cachedTask);
-    }
-
-    Optional<Task> task = taskRepository.findById(id);
-    task.ifPresent(t -> taskCache.put(t.getId(), t));
-    return task;
+  @Transactional(
+      readOnly = true,
+      propagation = Propagation.SUPPORTS,
+      isolation = Isolation.READ_COMMITTED)
+  public java.util.Optional<Task> getTaskById(Long id) {
+    return taskRepository.findById(id);
   }
 
+  @Transactional(
+      readOnly = true,
+      propagation = Propagation.SUPPORTS,
+      isolation = Isolation.READ_COMMITTED)
   public Task getTaskByIdOrThrow(Long id) {
-    return getTaskById(id).orElseThrow(() -> new TaskNotFoundException(id));
+    return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
   }
 
+  @Transactional(
+      readOnly = true,
+      propagation = Propagation.SUPPORTS,
+      isolation = Isolation.READ_COMMITTED)
   public List<Task> getAllTasks() {
-    List<Task> allTasks = taskRepository.findAll();
-    taskCache.clear();
-    allTasks.forEach(task -> taskCache.put(task.getId(), task));
-    return allTasks;
+    return taskRepository.findAll();
   }
 
+  @Transactional(
+      readOnly = true,
+      propagation = Propagation.SUPPORTS,
+      isolation = Isolation.READ_COMMITTED)
+  public List<Task> getAllTasksWithAttachments() {
+    return taskRepository.findAllWithAttachments();
+  }
+
+  @Transactional(
+      propagation = Propagation.REQUIRED,
+      isolation = Isolation.READ_COMMITTED)
   public Task updateTask(Task task) {
-    Task updatedTask = taskRepository.update(task);
-    taskCache.put(updatedTask.getId(), updatedTask);
-    return updatedTask;
+    return taskRepository.save(task);
   }
 
+  @Transactional(
+      propagation = Propagation.REQUIRED,
+      isolation = Isolation.READ_COMMITTED)
   public void deleteTask(Long id) {
     taskRepository.deleteById(id);
-    taskCache.remove(id);
   }
 
+  @Transactional(
+      readOnly = true,
+      propagation = Propagation.SUPPORTS,
+      isolation = Isolation.READ_COMMITTED)
   public boolean existsById(Long id) {
-    return taskCache.containsKey(id) || taskRepository.existsById(id);
+    return taskRepository.existsById(id);
+  }
+
+  @Transactional(
+      propagation = Propagation.REQUIRED,
+      isolation = Isolation.READ_COMMITTED,
+      rollbackFor = BulkCompleteTaskException.class)
+  public List<Task> bulkCompleteTasks(List<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+      return List.of();
+    }
+
+    List<Task> tasks = taskRepository.findAllById(ids);
+
+    Set<Long> found = new LinkedHashSet<>();
+    for (Task task : tasks) {
+      found.add(task.getId());
+    }
+
+    List<Long> missing = ids.stream().filter(id -> !found.contains(id)).distinct().toList();
+    if (!missing.isEmpty()) {
+      throw new BulkCompleteTaskException(missing);
+    }
+
+    for (Task task : tasks) {
+      task.setCompleted(true);
+    }
+
+    return taskRepository.saveAll(tasks);
   }
 }

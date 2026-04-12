@@ -19,7 +19,7 @@ app:
   version: "1.0.0"
   api:
     title: "To-Do List API"
-    version: "3.0.0"
+    version: "2.0.0"
     description: "REST API для управления задачами"
     contact:
       name: "Alexander Gorlanov"

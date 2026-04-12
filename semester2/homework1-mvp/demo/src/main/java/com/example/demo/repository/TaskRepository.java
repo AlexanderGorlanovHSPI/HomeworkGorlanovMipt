@@ -1,22 +1,27 @@
 package com.example.demo.repository;
 
+import com.example.demo.model.Priority;
 import com.example.demo.model.Task;
-
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.EntityGraph;
 
-public interface TaskRepository {
-  Task save(Task task);
 
-  Optional<Task> findById(Long id);
+public interface TaskRepository extends JpaRepository<Task, Long> {
 
-  List<Task> findAll();
+  List<Task> findByCompletedAndPriority(boolean completed, Priority priority);
 
-  Task update(Task task);
+  @Query("select t from Task t where t.dueDate between :from and :to")
+  List<Task> findDueInRange(@Param("from") LocalDate from, @Param("to") LocalDate to);
 
-  void deleteById(Long id);
+  default Task update(Task task) {
+    return save(task);
+  }
 
-  void deleteAll();
-
-  boolean existsById(Long id);
+  @EntityGraph(attributePaths = "attachments")
+  @Query("select distinct t from Task t")
+  List<Task> findAllWithAttachments();
 }

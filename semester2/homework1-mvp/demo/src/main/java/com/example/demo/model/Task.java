@@ -2,19 +2,71 @@ package com.example.demo.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+
+@Entity
+@Table(name = "tasks")
+@EntityListeners(AuditingEntityListener.class)
 public class Task {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Column(nullable = false, length = 100)
   private String title;
+
+  @Column(length = 500)
   private String description;
+
+  @Column(nullable = false)
   private boolean completed;
+
+  @CreatedDate
+  @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
+
+  @LastModifiedDate
+  @Column(name = "updated_at", nullable = false)
+  private LocalDateTime updatedAt;
+
+  @Column(name = "due_date")
   private LocalDate dueDate;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = 16)
   private Priority priority;
+
+  @ElementCollection(fetch = FetchType.LAZY)
+  @CollectionTable(name = "task_tags", joinColumns = @JoinColumn(name = "task_id"))
+  @Column(name = "tag", nullable = false, length = 64)
   private Set<String> tags = new HashSet<>();
+
+  @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+  private List<TaskAttachment> attachments = new ArrayList<>();
 
   public Task() {}
 
@@ -68,6 +120,14 @@ public class Task {
   public Set<String> getTags() { return tags; }
   public void setTags(Set<String> tags) {
     this.tags = tags == null ? new HashSet<>() : new HashSet<>(tags);
+  }
+
+  public LocalDateTime getUpdatedAt() { return updatedAt; }
+  public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+  public List<TaskAttachment> getAttachments() { return attachments; }
+  public void setAttachments(List<TaskAttachment> attachments) {
+    this.attachments = attachments == null ? new ArrayList<>() : attachments;
   }
 
   @Override

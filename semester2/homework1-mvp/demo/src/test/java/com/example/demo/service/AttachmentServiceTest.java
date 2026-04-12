@@ -2,13 +2,20 @@ package com.example.demo.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 import com.example.demo.exception.TaskNotFoundException;
 import com.example.demo.model.TaskAttachment;
-import com.example.demo.repository.InMemoryTaskAttachmentRepository;
+import com.example.demo.repository.TaskAttachmentRepository;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -26,8 +33,42 @@ class AttachmentServiceTest {
   @BeforeEach
   void setUp() {
     taskService = Mockito.mock(TaskService.class);
-    attachmentService =
-        new AttachmentService(new InMemoryTaskAttachmentRepository(), taskService, tempDir.toString());
+    TaskAttachmentRepository attachmentRepository = Mockito.mock(TaskAttachmentRepository.class);
+
+    Map<Long, TaskAttachment> storage = new ConcurrentHashMap<>();
+    AtomicLong idGenerator = new AtomicLong(1);
+
+    when(attachmentRepository.save(any(TaskAttachment.class)))
+        .thenAnswer(
+            invocation -> {
+              TaskAttachment attachment = invocation.getArgument(0);
+              if (attachment.getId() == null) {
+                attachment.setId(idGenerator.getAndIncrement());
+              }
+              storage.put(attachment.getId(), attachment);
+              return attachment;
+            });
+
+    when(attachmentRepository.findById(anyLong()))
+        .thenAnswer(invocation -> Optional.ofNullable(storage.get(invocation.getArgument(0))));
+
+    when(attachmentRepository.findByTaskId(anyLong()))
+        .thenAnswer(
+            invocation -> {
+              Long taskId = invocation.getArgument(0);
+              return storage.values().stream().filter(a -> taskId.equals(a.getTaskId())).toList();
+            });
+
+    doAnswer(
+            invocation -> {
+              Long id = invocation.getArgument(0);
+              storage.remove(id);
+              return null;
+            })
+        .when(attachmentRepository)
+        .deleteById(anyLong());
+
+    attachmentService = new AttachmentService(attachmentRepository, taskService, tempDir.toString());
   }
 
   @Test
