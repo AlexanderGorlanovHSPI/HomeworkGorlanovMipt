@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+app:
+  security:
+    pepper: "homework4-pepper"
+    jwt:
+      secret: "homework4-jwt-secret-key-homework4-jwt-secret-key-123456"
+      expiration-ms: 3600000
+
+external:
+  api:
+    base-url: "http://localhost:${server.port}/external/v1"
+    connect-timeout-ms: 1000
+    read-timeout-ms: 2000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+
+resilience4j:
+  ratelimiter:
+    instances:
+      externalApi:
+        limitForPeriod: 5
+        limitRefreshPeriod: 5s
+        timeoutDuration: 0s
+  circuitbreaker:
+    instances:
+      externalApi:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        permittedNumberOfCallsInHalfOpenState: 2
+        waitDurationInOpenState: 10s
+        recordExceptions:
+          - com.example.homework4.exception.ExternalApiException
+          - org.springframework.web.client.ResourceAccessException
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId}] %logger{36} - %msg%n"
