@@ -42,3 +42,6 @@ desktop.ini
 # Test files
 test-output/
 *.test
+
+# Uploaded files
+uploads/

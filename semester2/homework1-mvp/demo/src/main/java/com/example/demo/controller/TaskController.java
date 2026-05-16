@@ -1,189 +1,126 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.PrototypeScopedBean;
-import com.example.demo.model.RequestScopedBean;
+import com.example.demo.dto.ErrorResponse;
+import com.example.demo.dto.TaskCreateDto;
+import com.example.demo.dto.TaskResponseDto;
+import com.example.demo.dto.TaskUpdateDto;
 import com.example.demo.model.Task;
-import com.example.demo.model.TaskDto;
-import com.example.demo.service.AppInfoService;
+import com.example.demo.mapper.TaskMapper;
 import com.example.demo.service.TaskService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.demo.validation.OnCreate;
+import com.example.demo.validation.OnUpdate;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-/**
- * REST-контроллер для управления задачами. Предоставляет полный набор CRUD операций для работы с
- * задачами.
- *
- * <p>Базовый путь для всех эндпоинтов: /api/tasks
- *
- * @author Gorlanov Alexander
- * @version 1.0
- * @see TaskService
- * @see TaskDto
- */
 @RestController
 @RequestMapping("/api/tasks")
+@Tag(name = "Tasks", description = "Операции управления задачами")
 public class TaskController {
 
   private final TaskService taskService;
-  private final RequestScopedBean requestScopedBean;
-  private final ObjectFactory<PrototypeScopedBean> prototypeBeanFactory;
-  private final AppInfoService appInfoService;
+  private final TaskMapper taskMapper;
 
-  /**
-   * Конструктор с внедрением зависимости сервиса задач.
-   *
-   * @param taskService сервис для работы с задачами
-   * @param requestScopedBean request-scoped бин для демонстрации области видимости
-   * @param prototypeBeanFactory фабрика prototype-scoped бинов
-   * @param appInfoService сервис с информацией о приложении
-   */
   @Autowired
-  public TaskController(
-      TaskService taskService,
-      RequestScopedBean requestScopedBean,
-      ObjectFactory<PrototypeScopedBean> prototypeBeanFactory,
-      AppInfoService appInfoService) {
+  public TaskController(TaskService taskService, TaskMapper taskMapper) {
     this.taskService = taskService;
-    this.requestScopedBean = requestScopedBean;
-    this.prototypeBeanFactory = prototypeBeanFactory;
-    this.appInfoService = appInfoService;
+    this.taskMapper = taskMapper;
   }
 
-  /**
-   * Получить все задачи.
-   *
-   * @return список всех задач с HTTP статусом 200 OK
-   */
   @GetMapping
-  public ResponseEntity<List<TaskDto>> getAllTasks() {
-    List<TaskDto> tasks = taskService.getAllTasks().stream().map(this::toDto).toList();
-    return ResponseEntity.ok(tasks);
+  @Operation(summary = "Получить список задач")
+  @ApiResponses({
+      @ApiResponse(
+          responseCode = "200",
+          description = "Список задач",
+          content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskResponseDto.class))))
+  })
+  public ResponseEntity<List<TaskResponseDto>> getAllTasks() {
+    List<TaskResponseDto> tasks = taskMapper.toResponseDtoList(taskService.getAllTasks());
+    return ResponseEntity.ok().header("X-Total-Count", String.valueOf(tasks.size())).body(tasks);
   }
 
-  /**
-   * Получить задачу по её идентификатору.
-   *
-   * @param id идентификатор задачи
-   * @return задача с указанным ID или HTTP статус 404 Not Found
-   */
   @GetMapping("/{id}")
-  public ResponseEntity<TaskDto> getTaskById(@PathVariable Long id) {
-    return taskService
-        .getTaskById(id)
-        .map(task -> ResponseEntity.ok(toDto(task)))
-        .orElse(ResponseEntity.notFound().build());
+  @Operation(summary = "Получить задачу по идентификатору")
+  @ApiResponses({
+      @ApiResponse(
+          responseCode = "200",
+          description = "Задача найдена",
+          content = @Content(schema = @Schema(implementation = TaskResponseDto.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "Задача не найдена",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  public ResponseEntity<TaskResponseDto> getTaskById(@PathVariable Long id) {
+    Task task = taskService.getTaskByIdOrThrow(id);
+    return ResponseEntity.ok(taskMapper.toResponseDto(task));
   }
 
-  /**
-   * Создать новую задачу.
-   *
-   * @param taskDto данные новой задачи (ID может быть null)
-   * @return созданная задача с автоматически сгенерированным ID и статусом 201 Created
-   */
   @PostMapping
-  public ResponseEntity<TaskDto> createTask(@RequestBody TaskDto taskDto) {
-    Task createdTask = taskService.createTask(toModel(taskDto));
-    return ResponseEntity.status(HttpStatus.CREATED).body(toDto(createdTask));
+  @Operation(summary = "Создать задачу")
+  @ApiResponses({
+      @ApiResponse(
+          responseCode = "201",
+          description = "Задача создана",
+          content = @Content(schema = @Schema(implementation = TaskResponseDto.class))),
+      @ApiResponse(
+          responseCode = "400",
+          description = "Ошибка валидации",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  public ResponseEntity<TaskResponseDto> createTask(
+      @Validated(OnCreate.class) @RequestBody TaskCreateDto dto) {
+    Task createdTask = taskService.createTask(taskMapper.toEntity(dto));
+    return ResponseEntity.status(HttpStatus.CREATED).body(taskMapper.toResponseDto(createdTask));
   }
 
-  /**
-   * Обновить существующую задачу. ID в пути должен совпадать с ID в теле запроса.
-   *
-   * @param id идентификатор обновляемой задачи (из пути)
-   * @param taskDto обновленные данные задачи
-   * @return обновленная задача с HTTP статусом 200 OK или 404 Not Found
-   */
   @PutMapping("/{id}")
-  public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @RequestBody TaskDto taskDto) {
-    Task task = toModel(taskDto);
-    task.setId(id);
-
-    if (!taskService.existsById(id)) {
-      return ResponseEntity.notFound().build();
-    }
-
-    Task updatedTask = taskService.updateTask(task);
-    return ResponseEntity.ok(toDto(updatedTask));
+  @Operation(summary = "Обновить задачу")
+  @ApiResponses({
+      @ApiResponse(
+          responseCode = "200",
+          description = "Задача обновлена",
+          content = @Content(schema = @Schema(implementation = TaskResponseDto.class))),
+      @ApiResponse(
+          responseCode = "400",
+          description = "Ошибка валидации",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "Задача не найдена",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  public ResponseEntity<TaskResponseDto> updateTask(
+      @PathVariable Long id, @Validated(OnUpdate.class) @RequestBody TaskUpdateDto dto) {
+    Task existing = taskService.getTaskByIdOrThrow(id);
+    taskMapper.updateEntity(dto, existing);
+    Task updatedTask = taskService.updateTask(existing);
+    return ResponseEntity.ok(taskMapper.toResponseDto(updatedTask));
   }
 
-  /**
-   * Удалить задачу по идентификатору.
-   *
-   * @param id идентификатор удаляемой задачи
-   * @return пустой ответ с HTTP статусом 204 No Content или 404 Not Found
-   */
   @DeleteMapping("/{id}")
+  @Operation(summary = "Удалить задачу")
+  @ApiResponses({
+      @ApiResponse(responseCode = "204", description = "Задача удалена"),
+      @ApiResponse(
+          responseCode = "404",
+          description = "Задача не найдена",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
   public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-    if (!taskService.existsById(id)) {
-      return ResponseEntity.notFound().build();
-    }
-
+    taskService.getTaskByIdOrThrow(id);
     taskService.deleteTask(id);
     return ResponseEntity.noContent().build();
-  }
-
-  /**
-   * Демонстрирует работу request-scoped бина.
-   *
-   * @param request объект HttpServletRequest для получения информации о клиенте
-   * @return строковое представление состояния request-scoped бина
-   */
-  @GetMapping("/demo/request-scope")
-  public String demoRequestScope(HttpServletRequest request) {
-    requestScopedBean.setClientInfo(request.getRemoteAddr());
-
-    return String.format(
-        "Request Scope Demo:%nRequest ID: %s%nStart Time: %s%nBean: %s",
-        requestScopedBean.getRequestId(),
-        requestScopedBean.getFormattedStartTime(),
-        requestScopedBean);
-  }
-
-  /**
-   * Демонстрирует работу prototype-scoped бинов.
-   *
-   * @return строковое представление, показывающее различия между двумя экземплярами бина
-   */
-  @GetMapping("/demo/prototype-scope")
-  public String demoPrototypeScope() {
-    PrototypeScopedBean bean1 = prototypeBeanFactory.getObject();
-    PrototypeScopedBean bean2 = prototypeBeanFactory.getObject();
-
-    Long taskId1 = bean1.generateTaskId();
-    Long taskId2 = bean2.generateTaskId();
-
-    return String.format(
-        "Prototype Scope Demo:%nBean1 #%d ID: %s%nBean2 #%d ID: %s%nTask IDs: %d, %d%nSame bean? %s",
-        bean1.getInstanceNumber(),
-        bean1.getBeanId(),
-        bean2.getInstanceNumber(),
-        bean2.getBeanId(),
-        taskId1,
-        taskId2,
-        bean1 == bean2);
-  }
-
-  /**
-   * Получает информацию о приложении.
-   *
-   * @return строка с названием, версией, описанием и портом приложения
-   */
-  @GetMapping("/demo/info")
-  public String getAppInfo() {
-    return appInfoService.getAppInfo();
-  }
-
-  private TaskDto toDto(Task task) {
-    return new TaskDto(task.getId(), task.getTitle(), task.getDescription(), task.isCompleted());
-  }
-
-  private Task toModel(TaskDto taskDto) {
-    return new Task(taskDto.getId(), taskDto.getTitle(), taskDto.getDescription(), taskDto.isCompleted());
   }
 }
